@@ -2,8 +2,11 @@
 
 namespace Core;
 
+use Carbon\Carbon;
 use Core\Client;
 use Dotenv\Dotenv;
+use Dotenv\Exception\InvalidFileException;
+use Dotenv\Exception\InvalidPathException;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Support\Jsonable;
@@ -17,8 +20,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Session\SessionServiceProvider;
-use Dotenv\Exception\InvalidFileException;
-use Dotenv\Exception\InvalidPathException;
 
 class Ptp extends Container
 {
@@ -29,7 +30,10 @@ class Ptp extends Container
 
 	function __construct()
 	{
+		//Contancia para evitar que se pueda acceder a algunos archivos por medio del navegador
 		define('PTP_PROYECT', '');
+
+		//Se crea el contenedor principal y se inicializan las clases que se van a usar
 
 		$this->instance('path', realpath(__DIR__.'/../'));
 
@@ -44,6 +48,11 @@ class Ptp extends Container
 		$this->bootstrap();
 	}
 
+	/**
+     * Inicializa las clases en el contenedor principal
+     *
+     * @return Void
+     */
 
 	protected function bootstrap()
 	{
@@ -54,8 +63,15 @@ class Ptp extends Container
 		$this->instantiator();
 	}
 
+	/**
+     * Soporte para archivo de variables de entorno en .env
+     *
+     * @return void
+     */
+
 	protected function loadEnviroment()
 	{
+
 		try {
             $env = new Dotenv($this->basePath, '.env');
             $this->instance('env', $env);
@@ -67,6 +83,11 @@ class Ptp extends Container
         }
 
 	}
+	/**
+     * Inicializa las configuraciones globales y las ingresa en el contenedor en la clase Config 
+     *
+     * @return $this
+     */
 
 	protected function initConfiguration()
 	{
@@ -82,6 +103,13 @@ class Ptp extends Container
 
 		return $this;
 	}
+
+	/**
+     * Configura los eventos y la base de datos así como el migrator 
+     * para poder usar migraciones mediante archivos
+     *
+     * @return void
+     */
 
 	protected function initDatabase()
 	{
@@ -117,6 +145,11 @@ class Ptp extends Container
 		//$this->session->driver()->start();
 	}
 
+	/**
+     * Inicializa la clase de las Vistas
+     *
+     * @return void
+     */
 	protected function initViews()
 	{
 		$view = new View($this);
@@ -126,22 +159,42 @@ class Ptp extends Container
 		$this->instance('view', $view);
 	}
 
+	/**
+     * Instancia algunas clases en el contenedor
+     *
+     * @return void
+     */
+
 	protected function instantiator()
 	{
+		//Instancia del pretty Handler para las excepciones
 		$whoops = new \Whoops\Run;
 		$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 		$whoops->register();
 
 		$this->app->whoops = $whoops;
 
+		//Handle el Filesystem nativo
 		$this->singleton('files', function(){
 			return new Filesystem;
 		});
 		
+		//Instancia del Cliente usado para consumir el Web Service de PlaceToPay
 		$this->singleton('client', function(){
 			return new Client($this);
 		});
+
+		//Instancia de Carbon para manejo de fechas
+		$this->singleton('carbon', function($app){
+			return new Carbon();
+		});
 	}
+
+	/**
+     * Recibe el Request del navegador y lo procesa para devolver una respuesta
+     *
+     * @return void
+     */
 
 	public function run(Request $request)
 	{
@@ -152,12 +205,27 @@ class Ptp extends Container
 		return $response->prepare($request);
 	}
 
+	/**
+     * Los archivos llegan como una instancia de 
+     * Symfony\Component\HttpFoundation\File\UploadedFile;
+     * Este método los convierte en instancias de
+     * Illuminate\Http\UploadedFile;
+     * @return void
+     */
+
 	public function convertFiles(Request &$request)
 	{
 		if ($request->files->count() > 0) {
 			$request->files->replace($request->allFiles());
 		}
 	}
+
+	/**
+     * Recibe la respuesta que devuelven los controladores y la convierte en el
+     * tipo de Respuesta que se considere necesario
+     *
+     * @return void
+     */
 
 	public function prepareResponse($response)
 	{
@@ -177,6 +245,14 @@ class Ptp extends Container
 		return new Response($response);
 	}
 
+	/**
+     * Para no tener problemas con los Cors
+     * Este método se usa para casos prácticos
+     * PERO ES UNA MALA PRÁCITCA
+     *
+     * @return void
+     */
+
 	protected function setHeaders(&$response)
 	{
 		if ($response instanceof Response) {
@@ -188,6 +264,12 @@ class Ptp extends Container
 
 		return $response;	
 	}
+
+	/**
+     * Recibe el Request, Lo procesa y busca tanto el controlador como el método para 
+     * devolver una respuesta
+     * @return void
+     */
 
 	public function exec(Request $request)
 	{
@@ -241,6 +323,12 @@ class Ptp extends Container
 		return (new $controller)->callAction($method, ...$uri);
 
 	}
+
+	/**
+     * Libera el contenedor luego de que se devuelve una respuesta
+     *
+     * @return void
+     */
 
 	public function terminate()
 	{

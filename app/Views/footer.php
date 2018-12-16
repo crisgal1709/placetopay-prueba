@@ -4,7 +4,7 @@
         <footer class="sticky-footer">
           <div class="container my-auto">
             <div class="copyright text-center my-auto">
-              <span>Copyright © PTP <?php echo date('Y') ?></span>
+              <span>Copyright © PTP <?php echo date('Y') ?> - Cristian Galeano</span>
             </div>
           </div>
         </footer>

@@ -1,7 +1,7 @@
 <?php 
 
 if (!defined('PTP_PROYECT')) {
-	die(2);
+	die('No access direct');
 }
 
 $app = [

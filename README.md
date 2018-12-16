@@ -1,7 +1,5 @@
 # placetopay-prueba
 
-# My new project
-
 ## Introduction
 
 > Estad es una prueba técnica para la empresa PlaceTopay. En donde se consume los WebServices a travez de SoapClient.
@@ -30,6 +28,8 @@ Al tener lista la instalación, en el index (http://localhost/example) podrá cr
 Ya se porque presione "Pagar" o Vaya al Debug, lo realice, y presione "Regresar a PPE" esto le redirigirá al proyecto, en la dirección "http://localhost/example/transacciones/callback" y esto, le mostrará en pantalla si la transacción fue Aprobada, Rechaza, quedó como pendiente o Falló, además del ID De la transacción.
 
 Si se dirige a http://localhost/example/transacciones podrá observar un histórico con todas las transacciones que haya realizado
+
+Se puede ver un Demo de la aplicación en <a href="http://prueba-ptp.herokuapp.com/">http://prueba-ptp.herokuapp.com/</a>
 
 ## Tests
 Por último, si se encuentra en un ambiente de desarrollo, puede realizar los tests gracias a PHPUnit, ingresando por consola, situándose en la raíz del proyecto y ejecutando el comando: ./vendor/bin/phpunit
