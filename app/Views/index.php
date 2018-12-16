@@ -1,6 +1,5 @@
 <?php require 'header.php'; ?>
 
-
 <h1>Crear Transacción</h1>
 
 <div class="container">

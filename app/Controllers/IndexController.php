@@ -16,7 +16,12 @@ class IndexController extends Controller {
 		
 	}
 
-	public function prueba($id, $id2)
+	public function prueba()
+	{
+		return app()->view->render('prueba.php');
+	}
+
+	public function pruebaFiles()
 	{
 		
 	}

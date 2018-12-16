@@ -67,17 +67,17 @@ class TransaccionesController extends Controller
 
 		$person = [
             "document"     => $request->document,
-            "documentType" =>$request->documentType,
-            "firstName"    =>$request->firstName,
-            "lastName"     =>$request->lastName,
-            "company"      =>$request->company,
-            "emailAddress" =>$request->emailAddress,
-            "address"	   =>$request->address,
-            "city"         =>$request->city,
-            "province"     =>$request->province,
-            "country"	   =>$request->country,
-            "phone"		   =>$request->phone,
-            "mobile"	   =>$request->mobile,
+            "documentType" => $request->documentType,
+            "firstName"    => $request->firstName,
+            "lastName"     => $request->lastName,
+            "company"      => $request->company,
+            "emailAddress" => $request->emailAddress,
+            "address"	   => $request->address,
+            "city"         => $request->city,
+            "province"     => $request->province,
+            "country"	   => $request->country,
+            "phone"		   => $request->phone,
+            "mobile"	   => $request->mobile
         ];
 
         $shipping = [

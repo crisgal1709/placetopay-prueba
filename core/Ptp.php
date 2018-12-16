@@ -130,9 +130,17 @@ class Ptp extends Container
 	public function run(Request $request)
 	{
 		$request->enableHttpMethodParameterOverride();
+		$this->convertFiles($request);
 		$response = $this->prepareResponse($this->exec($request));
 		$this->setHeaders($response);
 		return $response->prepare($request);
+	}
+
+	public function convertFiles(Request &$request)
+	{
+		if ($request->files->count() > 0) {
+			$request->files->replace($request->allFiles());
+		}
 	}
 
 	public function prepareResponse($response)
