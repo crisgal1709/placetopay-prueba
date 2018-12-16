@@ -17,7 +17,7 @@
 				</p>
 				<?php endif ?>
 				<a href="<?php echo url('transacciones') ?>" class="btn btn-success">
-					Ver Historial
+					Ver Historial 
 				</a>
 			</center>
 		</div>
