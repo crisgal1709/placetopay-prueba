@@ -29,7 +29,7 @@ class Ptp extends Container
 
 	function __construct()
 	{
-		define(PTP_PROYECT, '');
+		define('PTP_PROYECT', '');
 
 		$this->instance('path', realpath(__DIR__.'/../'));
 
@@ -85,11 +85,27 @@ class Ptp extends Container
 
 	protected function initDatabase()
 	{
-		(new EventServiceProvider($this))->register();
-		(new DatabaseServiceProvider($this))->register();
-		(new DatabaseServiceProvider($this))->boot();
-		//(new SessionServiceProvider($this))->register();
-		$this->db->statement('select * from sessions');
+		$providers = [
+			EventServiceProvider::class,
+			DatabaseServiceProvider::class,
+		];
+		
+		foreach($providers as $provider)
+		{
+			try {
+				$p = new $provider($this);
+
+				if (method_exists($p, 'register')) {
+					$p->register();
+				}
+
+				if (method_exists($p, 'boot')) {
+					$p->boot();
+				}
+			} catch (Exception $e) {
+				//Silence is golden
+			}
+		}
 
 		$this->app->singleton('migrator', function($app){
 
